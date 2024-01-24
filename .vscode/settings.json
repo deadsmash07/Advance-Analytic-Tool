@@ -1,0 +1,14 @@
+{
+  "locofyConfig": {
+    "project_name": "Figma basics",
+    "id": "65b01092c7c5ff1754319f49",
+    "framework": "html-css",
+    "typescript": false,
+    "path": "public/",
+    "componentsPath": "/home/arnav/Documents/COP290/task2/src/components",
+    "screensPath": "/home/arnav/Documents/COP290/task2/src/pages",
+    "styling": "CSS",
+    "unit": "px",
+    "naming": "Kebab Case"
+  }
+}
