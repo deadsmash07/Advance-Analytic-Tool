@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request
 import yfinance as yf
 from datetime import datetime, timedelta
-from bokeh.plotting import figure
-from bokeh.embed import components
-from bokeh.models import DatetimeTickFormatter
 import pandas as pd
+import plotly.graph_objects as go
+import plotly.io as pio
+from plotly.utils import PlotlyJSONEncoder
+import json
 
 app = Flask(__name__)
 
@@ -27,34 +28,62 @@ def graph():
         return "No stock symbol provided", 400
 
     # Download the stock data
-    ten_years_ago = datetime.now() - timedelta(days=365 * 1)
+    ten_years_ago = datetime.now() - timedelta(days=365 * 10)
     data = yf.download(stock_symbol, start=ten_years_ago.strftime('%Y-%m-%d'), end=datetime.now().strftime('%Y-%m-%d'))
 
     # Convert the DataFrame index (which are Timestamps) to datetime
     data.index = pd.to_datetime(data.index)
-    #print head of the data
-    print(data.head())
-
-    # Write the data to a CSV file
-    data.to_csv('data.csv')
 
     # Create a new plot with a title and axis labels
-    p = figure(title="Stock prices for " + stock_symbol, x_axis_label='Date', y_axis_label='Price', x_axis_type="datetime")
+    fig = go.Figure(data=[go.Candlestick(x=data.index,
+                                         open=data['Open'],
+                                         high=data['High'],
+                                         low=data['Low'],
+                                         close=data['Close'])])
 
-    # Add a line renderer with legend and line thickness
-    p.line(data.index, data['Close'], legend_label="Close", line_width=2)
+    # Add range slider
+    fig.update_layout(
+        title="Stock prices for " + stock_symbol,
+        xaxis_title='Date',
+        yaxis_title='Price',
+        xaxis=dict(
+            rangeselector=dict(
+                buttons=list([
+                    dict(count=1,
+                         label="daily",
+                         step="day",
+                         stepmode="backward"),
+                    dict(count=1,
+                         label="1m",
+                         step="month",
+                         stepmode="backward"),
+                    dict(count=6,
+                         label="6m",
+                         step="month",
+                         stepmode="backward"),
+                    dict(count=10,
+                         label="TD",
+                         step="year",
+                         stepmode="todate"),
+                    dict(count=1,
+                         label="1y",
+                         step="year",
+                         stepmode="backward"),
+                    dict(step="all")
+                ])
+            ),
+            rangeslider=dict(
+                visible=True
+            ),
+            type="date"
+        )
+    )
 
-    # Format the x-axis to display dates
-    p.xaxis.formatter = DatetimeTickFormatter(days="%m/%d/%Y", months="%m/%d/%Y", years="%m/%d/%Y")
+    # Convert the figure to JSON
+    fig_json = json.dumps(fig, cls=PlotlyJSONEncoder)
 
-    # Generate the components of the plot
-    script, div = components(p)
-    print(script, div)  # Print the script and div
-    
-        
-
-    # Render the template and pass the components of the plot
-    return render_template('graph.html', script=script, div=div)
+    # Render the template and pass the JSON of the plot
+    return render_template('graph.html', plot=fig_json)
 
 if __name__ == "__main__":
     app.run(debug=True)

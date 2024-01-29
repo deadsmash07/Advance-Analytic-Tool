@@ -1,24 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Stock Graph</title>
-    <!-- Import Bokeh styles -->
-    <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-2.3.3.min.css" type="text/css" />
-    <!-- Import Bokeh script -->
-    <script src="https://cdn.bokeh.org/bokeh/release/bokeh-2.3.3.min.js"></script>
-</head>
-<body>
-    <h1>Stock Graph</h1>
-
-    <!-- Embed the Bokeh plot -->
-    <div>
-        {{ div|safe }}
-    </div>
-
-    <!-- Embed the components of the Bokeh plot -->
-    <script type="text/javascript">
-        {{ script|safe }}
-    </script>
-</body>
-</html>
+<div id="plot"></div>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    var plot = document.getElementById('plot');
+    var figure = {{ plot | safe }};
+    Plotly.newPlot(plot, figure.data, figure.layout);
+</script>
