@@ -1,0 +1,9 @@
+numpy
+matplotlib
+plotly  
+kaleido
+pandas
+argparse
+jugaad-data
+pyarrow
+fastparquet
