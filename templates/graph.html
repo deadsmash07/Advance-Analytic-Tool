@@ -1,7 +1,10 @@
-<div id="plot"></div>
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-<script>
+<!DOCTYPE html>
+<html lang="en">
+  <div id="plot"></div>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script>
     var plot = document.getElementById('plot');
     var figure = {{ plot | safe }};
     Plotly.newPlot(plot, figure.data, figure.layout);
-</script>
+  </script>
+</html>

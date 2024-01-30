@@ -27,7 +27,6 @@ def graph():
     if stock_symbol is None:
         return "No stock symbol provided", 400
     stock_symbol_nse= stock_symbol+".NS"
-
     # Download the stock data
     ten_years_ago = datetime.now() - timedelta(days=365 * 10)
     data = yf.download(stock_symbol_nse, start=ten_years_ago.strftime('%Y-%m-%d'), end=datetime.now().strftime('%Y-%m-%d'))
@@ -35,60 +34,110 @@ def graph():
     # Convert the DataFrame index (which are Timestamps) to datetime
     data.index = pd.to_datetime(data.index)
 
-    # Create a new plot with a title and axis labels
-    fig = go.Figure(data=[go.Candlestick(x=data.index,
-                                         open=data['Open'],
-                                         high=data['High'],
-                                         low=data['Low'],
-                                         close=data['Close'])])
+    # Create a line plot with the close price 
+    line_plot = go.Figure(data=[go.Scatter(x=data.index, y=data['Close'], name='', hovertemplate='Date: %{x}<br>Close Price: %{y}')])
 
-    # Add range slider
-    fig.update_layout(
-        title="Stock prices for " + stock_symbol,
+    # Add title and axis labels
+    line_plot.update_layout(
+        title="Close prices for " + stock_symbol,
         xaxis_title='Date',
         yaxis_title='Price',
+        autosize=True,
+        hovermode="x",
         xaxis=dict(
-            rangeselector=dict(
-                buttons=list([
-                    dict(count=1,
-                         label="daily",
-                         step="day",
-                         stepmode="backward"),
-                    dict(count=7,
-                         label="1W",
-                         step="day",
-                         stepmode="backward"),
-                    dict(count=1,
-                         label="1M",
-                         step="month",
-                         stepmode="backward"),
-                    dict(count=6,
-                         label="6M",
-                         step="month",
-                         stepmode="backward"),
-                    dict(count=1,
-                         label="1Y",
-                         step="year",
-                         stepmode="backward"),
-                    dict(count=10,
-                         label="10Y",
-                         step="year",
-                         stepmode="todate"),
-                    dict(step="all")
-                ])
-            ),
-            rangeslider=dict(
-                visible=True
-            ),
-            type="date"
+           rangeselector=dict(
+              buttons=list([
+                 dict(count=7,
+                     label="1W",
+                     step="day",
+                     stepmode="backward"),
+                 dict(count=1,
+                     label="1M",
+                     step="month",
+                     stepmode="backward"),
+                 dict(count=6,
+                     label="6M",
+                     step="month",
+                     stepmode="backward"),
+                 dict(count=1,
+                     label="1Y",
+                     step="year",
+                     stepmode="backward"),
+                 dict(count=10,
+                     label="10Y",
+                     step="year",
+                     stepmode="todate"),
+                 dict(step="all")
+              ])
+           ),
+           rangeslider=dict(
+              visible=True
+           ),
+           type="date"
         )
-    )
+    )   
+    # # Download the stock data
+    # ten_years_ago = datetime.now() - timedelta(days=365 * 10)
+    # data = yf.download(stock_symbol_nse, start=ten_years_ago.strftime('%Y-%m-%d'), end=datetime.now().strftime('%Y-%m-%d'))
 
-    # Convert the figure to JSON
-    fig_json = json.dumps(fig, cls=PlotlyJSONEncoder)
+    # # Convert the DataFrame index (which are Timestamps) to datetime
+    # data.index = pd.to_datetime(data.index)
 
+    # # Create a new plot with a title and axis labels
+    # fig = go.Figure(data=[go.Candlestick(x=data.index,
+    #                                      open=data['Open'],
+    #                                      high=data['High'],
+    #                                      low=data['Low'],
+    #                                      close=data['Close'])])
+
+    # # Add range slider
+    # fig.update_layout(
+    #     title="Stock prices for " + stock_symbol,
+    #     xaxis_title='Date',
+    #     yaxis_title='Price',
+    #     xaxis=dict(
+    #         rangeselector=dict(
+    #             buttons=list([
+    #                 dict(count=1,
+    #                      label="daily",
+    #                      step="day",
+    #                      stepmode="backward"),
+    #                 dict(count=7,
+    #                      label="1W",
+    #                      step="day",
+    #                      stepmode="backward"),
+    #                 dict(count=1,
+    #                      label="1M",
+    #                      step="month",
+    #                      stepmode="backward"),
+    #                 dict(count=6,
+    #                      label="6M",
+    #                      step="month",
+    #                      stepmode="backward"),
+    #                 dict(count=1,
+    #                      label="1Y",
+    #                      step="year",
+    #                      stepmode="backward"),
+    #                 dict(count=10,
+    #                      label="10Y",
+    #                      step="year",
+    #                      stepmode="todate"),
+    #                 dict(step="all")
+    #             ])
+    #         ),
+    #         rangeslider=dict(
+    #             visible=True
+    #         ),
+    #         type="date"
+    #     )
+    # )
+
+    # # Convert the figure to JSON
+    # fig_json = json.dumps(fig, cls=PlotlyJSONEncoder)
+    #convert the figure to JSON for line plot
+    fig_json2 = json.dumps(line_plot, cls=PlotlyJSONEncoder)
     # Render the template and pass the JSON of the plot
-    return render_template('graph.html', plot=fig_json)
+    return render_template('graph.html', plot=fig_json2)
 
 if __name__ == "__main__":
     app.run(debug=True)
