@@ -1,10 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-  <div id="plot"></div>
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-  <script>
-    var plot = document.getElementById('plot');
-    var figure = {{ plot | safe }};
-    Plotly.newPlot(plot, figure.data, figure.layout);
-  </script>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div id="plot"></div>
+    <button onclick="toggleGraph()">candlestick <-> Line</button>
+
+    <script>
+        var plot = document.getElementById('plot');
+        var linePlotData = {{ line_plot | safe }};
+        var candlestickPlotData = {{ candlestick_plot | safe }};
+        var currentGraphType = 'line';
+
+        function toggleGraph() {
+            if (currentGraphType === 'line') {
+                // Switch to candlestick graph
+                Plotly.newPlot(plot, candlestickPlotData.data, candlestickPlotData.layout);
+                currentGraphType = 'candlestick';
+            } else {
+                // Switch to line graph
+                Plotly.newPlot(plot, linePlotData.data, linePlotData.layout);
+                currentGraphType = 'line';
+            }
+        }
+
+        // Initial plot with line graph
+        Plotly.newPlot(plot, linePlotData.data, linePlotData.layout);
+    </script>
+</body>
 </html>
