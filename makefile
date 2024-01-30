@@ -1,7 +1,9 @@
-# Makefile
-
-all: run
+install:
+	@echo "Installing dependencies..."
+	@pip install -r requirements.txt
 
 run:
-	@pip3 install -r requirements.txt
-	@python3 main.py $(SYMBOL) $(num_years)
+	@echo "Running the application..."
+	@python3 test_flask.py
+
+all: install run
