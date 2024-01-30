@@ -5,6 +5,45 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Explore Stocks</title>
+    <style>
+        /* Style for the modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        /* Close button style */
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
     <h1>Explore Stocks</h1>
@@ -12,9 +51,9 @@
     <!-- Section for Comparing Stocks -->
     <section>
         <h2>Compare Stocks</h2>
-        <form action="{{ url_for('select_stocks') }}" method="get">
-            <label for="num_stocks">Select how many stocks you want to compare:</label>
-            <select id="num_stocks" name="num_stocks" required>
+        <form id="compareForm" onsubmit="openModal(); return false;">
+            <label for="numStocks">Select how many stocks you want to compare:</label>
+            <select id="numStocks" name="numStocks" required>
                 <option value="1">1 Stock</option>
                 <option value="2">2 Stocks</option>
                 <option value="3">3 Stocks</option>
@@ -24,23 +63,51 @@
         </form>
     </section>
 
-    <!-- Section for Best Performing Stocks of the Day -->
-    <section>
-        <h2>Best Performing Stocks of the Day</h2>
-        <!-- Add content related to best-performing stocks here -->
-    </section>
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <form action="{{ url_for('compare_graph') }}" method="get" id="modalForm">
+                <!-- Stock names will be dynamically added here using JavaScript -->
+                <input type="submit" value="Compare">
+            </form>
+        </div>
+    </div>
 
-    <!-- Section for Trending Stocks -->
-    <section>
-        <h2>Trending Stocks</h2>
-        <!-- Add content related to trending stocks here -->
-    </section>
+<!-- JavaScript for modal -->
+<script>
+    function openModal() {
+        var numStocks = document.getElementById('numStocks').value;
+        var modalForm = document.getElementById('modalForm');
+        
+        // Clear existing content
+        modalForm.innerHTML = '<h2>Enter Stock Names</h2>';
 
-    <!-- Section for Stock News -->
-    <section>
-        <h2>Stock News</h2>
-        <!-- Add content related to stock news here -->
-    </section>
+        for (var i = 1; i <= numStocks; i++) {
+            modalForm.innerHTML += '<label for="stock' + i + '">Enter Stock Symbol ' + i + ':</label>';
+            modalForm.innerHTML += '<input type="text" id="stock' + i + '" name="stocks" required /><br>';
+        }
+
+        modalForm.innerHTML += '<input type="submit" value="Compare">';
+        
+        // Display the modal
+        document.getElementById('myModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        // Close the modal
+        document.getElementById('myModal').style.display = 'none';
+    }
+
+    // Close the modal if the user clicks outside of it
+    window.onclick = function(event) {
+        var modal = document.getElementById('myModal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+</script>
 
 </body>
 </html>

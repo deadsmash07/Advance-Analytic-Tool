@@ -16,8 +16,7 @@ def home():
 
 @app.route('/Explore/', methods=['GET'])
 def explore():
-    num_stocks = int(request.args.get('num_stocks', 1))
-    return render_template('explore.html', num_stocks=num_stocks)
+    return render_template('explore.html')
 
 @app.route('/graph', methods=['GET'])
 def graph():
@@ -62,21 +61,14 @@ def graph():
     fig_json2 = json.dumps(line_plot, cls=PlotlyJSONEncoder)
     return render_template('graph.html', plot=fig_json2)
 
-@app.route('/select_stocks', methods=['GET'])
-def select_stocks():
-    num_stocks = int(request.args.get('num_stocks', 1))
-    return render_template('select_stocks.html', num_stocks=num_stocks)
-
 @app.route('/compare_graph', methods=['GET'])
 def compare_graph():
-    num_stocks = int(request.args.get('num_stocks', 1))
-
-    stock_symbols = [request.args.get(f'stock{i+1}') for i in range(4)]
-    stock_symbols = [symbol for symbol in stock_symbols if symbol]
-
-    if not stock_symbols:
-        return "Please provide at least one stock symbol", 400
+    stock_symbols = request.args.getlist('stocks')
     stock_symbols = [symbol + ".NS" for symbol in stock_symbols]
+
+    if not all(stock_symbols):
+        return "Please provide valid stock symbols", 400
+
     data = [yf.download(symbol, start='2013-01-01', end=datetime.now().strftime('%Y-%m-%d')) for symbol in stock_symbols]
 
     fig = go.Figure()
