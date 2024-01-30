@@ -26,10 +26,11 @@ def graph():
     # Check if the stock symbol is None
     if stock_symbol is None:
         return "No stock symbol provided", 400
+    stock_symbol_nse= stock_symbol+".NS"
 
     # Download the stock data
     ten_years_ago = datetime.now() - timedelta(days=365 * 10)
-    data = yf.download(stock_symbol, start=ten_years_ago.strftime('%Y-%m-%d'), end=datetime.now().strftime('%Y-%m-%d'))
+    data = yf.download(stock_symbol_nse, start=ten_years_ago.strftime('%Y-%m-%d'), end=datetime.now().strftime('%Y-%m-%d'))
 
     # Convert the DataFrame index (which are Timestamps) to datetime
     data.index = pd.to_datetime(data.index)
@@ -53,22 +54,26 @@ def graph():
                          label="daily",
                          step="day",
                          stepmode="backward"),
+                    dict(count=7,
+                         label="1W",
+                         step="day",
+                         stepmode="backward"),
                     dict(count=1,
-                         label="1m",
+                         label="1M",
                          step="month",
                          stepmode="backward"),
                     dict(count=6,
-                         label="6m",
+                         label="6M",
                          step="month",
                          stepmode="backward"),
-                    dict(count=10,
-                         label="TD",
-                         step="year",
-                         stepmode="todate"),
                     dict(count=1,
-                         label="1y",
+                         label="1Y",
                          step="year",
                          stepmode="backward"),
+                    dict(count=10,
+                         label="10Y",
+                         step="year",
+                         stepmode="todate"),
                     dict(step="all")
                 ])
             ),

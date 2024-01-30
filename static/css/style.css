@@ -97,3 +97,12 @@ header nav {
         margin-bottom: 10px;
     }
 }
+
+/*going to style my graph.html page*/
+
+#graph {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
