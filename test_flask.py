@@ -1,3 +1,4 @@
+# Import other necessary libraries
 from flask import Flask, render_template, request
 import yfinance as yf
 from datetime import datetime, timedelta
@@ -77,6 +78,47 @@ def create_candlestick_plot(data, stock_symbol):
 
     return to_json(candlestick_plot)
 
+def get_stock_details(stock_symbol):
+    # Fetch stock details using yfinance
+    stock_info = yf.Ticker(stock_symbol)
+
+    try:
+        # Get the most recent historical data (1 day)
+        history_data = stock_info.history(period='1d')
+        print(history_data.head())
+        if not history_data.empty:
+            # Get the 'Open' and 'Close' prices from the most recent row
+            open_price = history_data.iloc[-1]['Open']
+            close_price = history_data.iloc[-1]['Close']
+            high_price = history_data.iloc[-1]['High']
+            low_price = history_data.iloc[-1]['Low']
+            volume = history_data.iloc[-1]['Volume']
+         
+        else:
+            open_price = 'N/A'
+            close_price = 'N/A'
+
+    except IndexError:
+        # Handle IndexError (out-of-bounds) by setting prices to 'N/A'
+        open_price = 'N/A'
+        close_price = 'N/A'
+
+    # Get other stock details
+    pe_ratio = stock_info.info.get('trailingPE', 'N/A')
+    about_stock = stock_info.info.get('longBusinessSummary', 'N/A')
+
+    return {
+        'PE_RATIO': pe_ratio,
+        'OPEN_PRICE': open_price,
+        'CLOSE_PRICE': close_price,
+        'ABOUT_STOCK': about_stock,
+        'HIGH_PRICE': high_price,
+        'LOW_PRICE': low_price,
+        'VOLUME': volume,
+       
+    }
+
+
 @app.route('/home')
 @app.route('/')
 def home():
@@ -95,7 +137,7 @@ def graph():
 
     stock_symbol_nse = stock_symbol + ".NS"
 
-    ten_years_ago = datetime.now() - timedelta(days=365 * 10)
+    ten_years_ago = datetime.now() - timedelta(days=365 * 15)
     data = yf.download(stock_symbol_nse, start=ten_years_ago.strftime('%Y-%m-%d'), end=datetime.now().strftime('%Y-%m-%d'))
 
     data.index = pd.to_datetime(data.index)
@@ -103,7 +145,11 @@ def graph():
     line_plot_json = create_line_plot(data, stock_symbol)
     candlestick_plot_json = create_candlestick_plot(data, stock_symbol)
 
-    return render_template('graph.html', line_plot=line_plot_json, candlestick_plot=candlestick_plot_json)
+    stock_details = get_stock_details(stock_symbol_nse)
+
+  
+    return render_template('graph.html', line_plot=line_plot_json, candlestick_plot=candlestick_plot_json, stock_symbol=stock_symbol, stock_details=stock_details)
+
 
 @app.route('/compare_graph', methods=['GET'])
 def compare_graph():
@@ -145,6 +191,5 @@ def compare_graph():
 
     fig_json = json.dumps(fig, cls=PlotlyJSONEncoder)
     return render_template('compare_graph.html', plot=fig_json)
-
 if __name__ == "__main__":
     app.run(debug=True)

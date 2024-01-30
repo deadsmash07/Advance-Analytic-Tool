@@ -112,3 +112,31 @@ header nav {
   margin: 0;
   padding: 0;
 }
+
+/* styles.css */
+
+/* Style for stock details annotation */
+#stock-details {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid #ccc;
+    padding: 10px;
+    max-width: 300px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Style for stock details heading */
+#stock-details h2 {
+    margin-bottom: 5px;
+    font-size: 16px;
+    color: #333;
+}
+
+/* Style for stock details content */
+#stock-details p {
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+}

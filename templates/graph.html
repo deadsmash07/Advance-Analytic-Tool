@@ -1,14 +1,31 @@
+<!-- graph.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
     <div id="plot"></div>
     <button onclick="toggleGraph()">candlestick <-> Line</button>
+    <div id="stock-details">
+        <h2>Stock Details</h2> 
+        <p id="stock-symbol">Stock Symbol: {{ stock_symbol }}</p>
+        <p id="open-price">Opening Price: {{ stock_details['OPEN_PRICE'] }}</p>
+        <p id="close-price">Closing Price: {{ stock_details['CLOSE_PRICE'] }}</p>
+        <p id="high-price">High Price: {{ stock_details['HIGH_PRICE'] }}</p>
+        <p id="low-price">Low Price: {{ stock_details['LOW_PRICE'] }}</p>
+        <p id="volume">Volume: {{ stock_details['VOLUME'] }}</p>
+        <p id="pe-ratio">P/E Ratio: {{ stock_details['PE_RATIO'] }}</p>
+        <p id="about-stock">About this Stock: {{ stock_details['ABOUT_STOCK'] }}</p>
+        
+    </div>
+
+    
 
     <script>
         var plot = document.getElementById('plot');
