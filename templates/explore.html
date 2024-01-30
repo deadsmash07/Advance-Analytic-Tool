@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Stocks</title>
+</head>
+<body>
+    <h1>Explore Stocks</h1>
+    
+    <!-- Section for Comparing Stocks -->
+    <section>
+        <h2>Compare Stocks</h2>
+        <form action="{{ url_for('select_stocks') }}" method="get">
+            <label for="num_stocks">Select how many stocks you want to compare:</label>
+            <select id="num_stocks" name="num_stocks" required>
+                <option value="1">1 Stock</option>
+                <option value="2">2 Stocks</option>
+                <option value="3">3 Stocks</option>
+                <option value="4">4 Stocks</option>
+            </select>
+            <input type="submit" value="Next">
+        </form>
+    </section>
+
+    <!-- Section for Best Performing Stocks of the Day -->
+    <section>
+        <h2>Best Performing Stocks of the Day</h2>
+        <!-- Add content related to best-performing stocks here -->
+    </section>
+
+    <!-- Section for Trending Stocks -->
+    <section>
+        <h2>Trending Stocks</h2>
+        <!-- Add content related to trending stocks here -->
+    </section>
+
+    <!-- Section for Stock News -->
+    <section>
+        <h2>Stock News</h2>
+        <!-- Add content related to stock news here -->
+    </section>
+
+</body>
+</html>

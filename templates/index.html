@@ -1,49 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Online Trading Platform</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+  </head>
+  <body>
     <header>
-        <nav>
-            <ul>
-                <li><a href="/Explore">Explore</a></li>
-                <li><a href="#">Investments</a></li>
-            </ul>
-            <div class="search-container">
-                <form action="/graph" method="get">
-                    <input type="text" placeholder="Search Stocks" name="search">
-                    <button type="submit">Submit</button>
-                </form>
-                
-                </form>
-            </div>
-            <div class="dropdown">
-                <button class="dropbtn">Account</button>
-                <div class="dropdown-content">
-                    <a href="#">Profile</a>
-                    <a href="#">Settings</a>
-                    <a href="#">Logout</a>
-                </div>
-            </div>
-        </nav>
+      <nav>
+        <ul>
+          <li><a href="/Explore">Explore</a></li>
+          <li><a href="#">Investments</a></li>
+        </ul>
+        <div class="search-container">
+          <form action="/graph" method="get">
+            <input type="text" placeholder="Search Stocks" name="search" />
+            <button type="submit">Submit</button>
+          </form>
+        </div>
+        <div class="dropdown">
+          <button class="dropbtn">Account</button>
+          <div class="dropdown-content">
+            <a href="#">Profile</a>
+            <a href="#">Settings</a>
+            <a href="#">Logout</a>
+          </div>
+        </div>
+      </nav>
     </header>
     <main>
-        <section>
-            <h1>Welcome to Our Online Trading Platform</h1>
-            <p>Start trading with us today. Explore markets, manage your portfolio, place orders, and more.</p>
-        </section>
-        <section>
-            <h2>Markets</h2>
-            <!-- Market data goes here -->
-        </section>
-        <section>
-            <h2>Your Portfolio</h2>
-            <!-- Portfolio data goes here -->
-        </section>
+      <section>
+        <h1>Welcome to Our Online Trading Platform</h1>
+        <p>
+          Start trading with us today. Explore markets, manage your portfolio,
+          place orders, and more.
+        </p>
+      </section>
+      <section>
+        <h2>Markets</h2>
+        <!-- Placeholder for dynamic market data -->
+        <p>Loading live market data...</p>
+        <!-- You'll need to use JavaScript to fetch and update this content -->
+      </section>
+      <section>
+        <h2>Your Portfolio</h2>
+        <!-- Placeholder for dynamic portfolio data -->
+        <p>Loading your portfolio...</p>
+        <!-- You'll need to use JavaScript to fetch and update this content -->
+      </section>
     </main>
-</body>
+  </body>
 </html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Compare Stocks</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  </head>
+  <body>
+    <h1>Compare Stocks</h1>
+    <div id="plot"></div>
+
+    <script>
+      // Parse the JSON string of the plot data
+      var plotData = {{ plot|safe }};
+
+      // Render the plot using Plotly
+      Plotly.newPlot('plot', plotData.data, plotData.layout);
+    </script>
+  </body>
+</html>
