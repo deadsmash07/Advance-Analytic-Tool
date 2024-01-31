@@ -15,7 +15,6 @@ def get_stock_details(stock_symbol):
         'PE_RATIO': pe_ratio,
         'ABOUT_STOCK': about_stock
     }
-import yfinance as yf
 
 # Replace 'AAPL' with the stock symbol of your choice
 symbol = 'AAPL'
