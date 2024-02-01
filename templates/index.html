@@ -1,57 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Online Trading Platform</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/style.css') }}"
-    />
-  </head>
-  <body>
-    <header>
-      <nav>
-        <ul>
-          <li><a href="/Explore">Explore</a></li>
-          <li><a href="#">Investments</a></li>
-        </ul>
-        <div class="search-container">
-          <form action="/graph" method="get">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <title>Document</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div class="navbar">
+        <div class="brand">Stock Market</div>
+        <div class="menu">
+            <div class="menuele">Home</div>
+            <div class="menuele">Stocks</div>
+            <div class="menuele">About</div>
+        </div>
+        <form action="/graph" method="get" class="searchbox">
             <input type="text" placeholder="Search Stocks" name="search" />
-            <button type="submit">Submit</button>
-          </form>
+            <button type="submit">Search</button>
+        </form>
+        <div class="profile">
+            <span class="material-symbols-outlined" id="setting">settings</span>
+            <span class="material-symbols-outlined">notifications</span>
+            <span class="dp"></span>
         </div>
-        <div class="dropdown">
-          <button class="dropbtn">Account</button>
-          <div class="dropdown-content">
-            <a href="#">Profile</a>
-            <a href="#">Settings</a>
-            <a href="#">Logout</a>
-          </div>
+    </div>
+
+    <div class="mainbody">
+        <div class="hello">
+            <span id="hi">👋Hi Pratyaksh,</span>
+            <span id="wel">Welcome Back</span>
+            <div id="invest">Invest your money with small risk</div>
         </div>
-      </nav>
-    </header>
-    <main>
-      <section>
-        <h1>Welcome to Our Online Trading Platform</h1>
-        <p>
-          Start trading with us today. Explore markets, manage your portfolio,
-          place orders, and more.
-        </p>
-      </section>
-      <section>
-        <h2>Markets</h2>
-        <!-- Placeholder for dynamic market data -->
-        <p>Loading live market data...</p>
-        <!-- You'll need to use JavaScript to fetch and update this content -->
-      </section>
-      <section>
-        <h2>Your Portfolio</h2>
-        <!-- Placeholder for dynamic portfolio data -->
-        <p>Loading your portfolio...</p>
-        <!-- You'll need to use JavaScript to fetch and update this content -->
-      </section>
-    </main>
-  </body>
+        <div class="change">
+            <div class="change1">
+                <div class="totalreturn">1 day return</div>
+                <div class="totalreturnvalue">{{ return_day | round(2) }}%</div>
+            </div>
+            <div class="change2">
+                <div class="totalreturn">1 week return</div>
+                <div class="totalreturnvalue">{{ return_week | round(2) }}%</div>
+            </div>
+            <div class="change3">
+                <div class="totalreturn">1 year return</div>
+                <div class="totalreturnvalue">{{ return_year | round(2) }}%</div>
+            </div>
+        </div>
+        <div class="chart">
+            <div id="nifty_line_plot"></div>
+        </div>
+    </div>
+<script>
+    var plotData = {{ nifty_line_plot|safe }};
+    Plotly.newPlot('nifty_line_plot', plotData.data, plotData.layout);
+</script>
+    <div class="tracker">
+        <div class="heading">
+            <a href="/trending.html">Trending</a>
+            <a href="/top_performer.html">Top Gainer</a>
+            <a href="/top_loser.html">Top Loser</a>
+        </div>
+        <div class="elements"> 
+            {% for element in top_gainers %}
+                <div class="element">
+                    <div class="elementname">{{ element[0] }}</div>
+                    <div class="price">
+                        <div class="elementchange">{{ element[1] }}</div>
+                    </div>  
+                </div>         
+            {% endfor %}
+        </div>
+    </div>
+
+
+</body>
 </html>
