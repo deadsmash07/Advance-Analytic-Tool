@@ -41,8 +41,12 @@
 }
 .menuele {
     background-color: #fff;
-    font-size: 18px;
+    font-size: 24px;
     margin-left: 40px;
+}
+a{
+    text-decoration: none;
+    color: #000000;
 }
 .searchbox{
     background-color: #f6f6f6;
@@ -87,8 +91,8 @@ button{
     justify-content: center;
     align-items: center;
 }
-.menuele:hover{
-    font-size: 20px;
+.menuele:hover, #menuele{
+    font-size: 28px;
     font-weight: 600;
     color: #000000;
     cursor: pointer;
@@ -287,11 +291,20 @@ button:hover{
 }
 .element{
     display: flex;
-    padding: 20px;
+    padding: 20px 20px;
     width: 90%;
     justify-content: space-between;
     align-items: center;
     /* flex-direction: column; */
+}
+.element:nth-child(even){
+    background-color: rgba(128, 128, 128, 0.088);
+    border-radius: 8px;
+}
+.elementchange{
+    font-size: 20px;
+    font-weight: 300;
+    color: green;
 }
 .elementname{
     font-size: 25px;

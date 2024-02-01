@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/explore.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <title>Explore Stocks</title>
     <style>
         /* Style for the modal */
@@ -45,21 +47,38 @@
         }
     </style>
 </head>
-<body>
-    <h1>Explore Stocks</h1>
-    
+<body >
+    <div class="navbar">
+        <div class="brand">Stock Market</div>
+        <div class="menu">
+            <a href="{{ url_for('home') }}" class="menuele" >Home</a>
+            <div class="menuele" >Stocks</div>
+            <a href="{{ url_for('explore') }}" class="menuele" id="menuele">Compare</a>
+            <a href="{{ url_for('news') }}" class="menuele">News</a>
+        </div>
+        <form action="/graph" method="get" class="searchbox">
+            <input type="text" placeholder="Search Stocks" name="search" />
+            <button type="submit">Search</button>
+        </form>
+        <div class="profile">
+            <span class="material-symbols-outlined" id="setting">settings</span>
+            <span class="material-symbols-outlined">notifications</span>
+            <span class="dp"></span>
+        </div>
+    </div>
     <!-- Section for Comparing Stocks -->
-    <section>
+    <div class="mainbody">
+            <section>
         <h2>Compare Stocks</h2>
         <form id="compareForm" onsubmit="openModal(); return false;">
-            <label for="numStocks">Select how many stocks you want to compare:</label>
+            <label for="numStocks" class="text">Select how many stocks you want to compare:</label>
             <select id="numStocks" name="numStocks" required>
                 <option value="1">1 Stock</option>
                 <option value="2">2 Stocks</option>
                 <option value="3">3 Stocks</option>
                 <option value="4">4 Stocks</option>
             </select>
-            <input type="submit" value="Next">
+            <input type="submit" value="Next" class="buton">
         </form>
     </section>
 
@@ -74,6 +93,8 @@
             </form>
         </div>
     </div>
+    </div>
+
 
 <!-- JavaScript for modal -->
 <script>
@@ -85,7 +106,7 @@
         modalForm.innerHTML = '<h2>Enter Stock Names</h2>';
 
         for (var i = 1; i <= numStocks; i++) {
-            modalForm.innerHTML += '<label for="stock' + i + '">Enter Stock Symbol ' + i + ':</label>';
+            modalForm.innerHTML += '<label for="stock' + i + '" >Enter Stock Symbol ' + i + ':</label>';
             modalForm.innerHTML += '<input type="text" id="stock' + i + '" name="stocks" required /><br>';
         }
 

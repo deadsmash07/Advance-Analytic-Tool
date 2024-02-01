@@ -6,12 +6,35 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="/static/css/graph.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
+        <div class="navbar">
+        <div class="brand">Stock Market</div>
+        <div class="menu">
+            <a href="{{ url_for('home') }}" class="menuele" >Home</a>
+            <div class="menuele" id="menuele">Stocks</div>
+            <a href="{{ url_for('explore') }}" class="menuele" >Compare</a>
+            <a href="{{ url_for('news') }}" class="menuele">News</a>
+        </div>
+        <form action="/graph" method="get" class="searchbox">
+            <input type="text" placeholder="Search Stocks" name="search" />
+            <button type="submit">Search</button>
+        </form>
+        <div class="profile">
+            <span class="material-symbols-outlined" id="setting">settings</span>
+            <span class="material-symbols-outlined">notifications</span>
+            <span class="dp"></span>
+        </div>
+    </div>
+    <div class="mainbody">
+    <div class="graph">
     <div id="plot"></div>
     <button onclick="toggleGraph()">candlestick <-> Line</button>
+    </div>
+
     <div id="stock-details">
         <h2>Stock Details</h2> 
         <p id="stock-symbol">Stock Symbol: {{ stock_symbol }}</p>
@@ -21,9 +44,11 @@
         <p id="low-price">Low Price: {{ stock_details['LOW_PRICE'] }}</p>
         <p id="volume">Volume: {{ stock_details['VOLUME'] }}</p>
         <p id="pe-ratio">P/E Ratio: {{ stock_details['PE_RATIO'] }}</p>
-        <p id="about-stock">About this Stock: {{ stock_details['ABOUT_STOCK'] }}</p>
         
     </div>
+    </div>
+    
+    <p id="about-stock">About this Stock: {{ stock_details['ABOUT_STOCK'] }}</p>
 
     
 

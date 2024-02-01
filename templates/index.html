@@ -12,9 +12,10 @@
     <div class="navbar">
         <div class="brand">Stock Market</div>
         <div class="menu">
-            <div class="menuele">Home</div>
+            <a href="{{ url_for('home') }}" class="menuele" id="menuele">Home</a>
             <div class="menuele">Stocks</div>
-            <div class="menuele">About</div>
+            <a href="{{ url_for('explore') }}" class="menuele">Compare</a>
+            <a href="{{ url_for('news') }}" class="menuele">News</a>
         </div>
         <form action="/graph" method="get" class="searchbox">
             <input type="text" placeholder="Search Stocks" name="search" />
@@ -63,16 +64,16 @@
         </div>
         <div class="elements"> 
             {% for element in top_gainers %}
-                <div class="element">
-                    <div class="elementname">{{ element[0] }}</div>
+                <form action="/graph" method="get" class="element">
+                    <input type="hidden" name="search" value="{{ element[0] }}">
+                    <div class="elementname">{{ element[0]}}</div>
                     <div class="price">
                         <div class="elementchange">{{ element[1] }}</div>
-                    </div>  
-                </div>         
+                    </div> 
+                    <button type="submit">Search</button> 
+                </form>         
             {% endfor %}
         </div>
     </div>
-
-
 </body>
 </html>

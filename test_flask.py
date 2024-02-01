@@ -8,12 +8,15 @@ from plotly.io import to_json
 from plotly.subplots import make_subplots
 import json
 from plotly.utils import PlotlyJSONEncoder
-
+from data import get_top_gainers_losers
+import schedule
+import time
 app = Flask(__name__)
 
 def create_plot(data, stock_symbol, plot_type):
     if plot_type == 'area':
-        plot = go.Figure(data=go.Scatter(x=data.index, y=data['Close'], fill='tozeroy', fillcolor='rgba(224, 174, 208,0.5)', line_color='rgb(172, 135, 197)', name=stock_symbol))        
+        plot = go.Figure(data=go.Scatter(x=data.index, y=data['Close'], fill='tozeroy', fillcolor='rgba(224, 174, 208,0.5)', line_color='rgba(177,79,255,1)', name=stock_symbol))        # plot = go.Figure(data=[go.Scatter(x=data.index, y=data['Close'], name='NIFTY', fill='tozeroy', fillcolor='rgba(224, 174, 208,0.5)', line=dict(color='rgba(177,79,255,1)'))])
+       
         title = "Close prices for " + stock_symbol
     elif plot_type == 'candlestick':
         plot = go.Figure(data=[go.Candlestick(x=data.index,
@@ -34,8 +37,8 @@ def create_plot(data, stock_symbol, plot_type):
         width=1500,
         height=600,        
         hovermode="x",
-        paper_bgcolor='rgba(255, 229, 229,0.2)',  # boundary color
-        plot_bgcolor='rgba(255,255,255, 0.9)',
+        paper_bgcolor='rgba(255, 229, 229,0.0)',
+        plot_bgcolor='rgba(255, 229, 229,0.0)',
         xaxis=dict(
             rangeselector=dict(
                 buttons=list([
@@ -73,7 +76,7 @@ def get_stock_details(stock_symbol):
     try:
         # Get the most recent historical data (1 day)
         history_data = stock_info.history(period='1d')
-        print(history_data.head())
+        #print(history_data.head())
         if not history_data.empty:
             # Get the 'Open' and 'Close' prices from the most recent row
             open_price = history_data.iloc[-1]['Open']
@@ -155,7 +158,7 @@ def home():
     # Read the top_gainers.csv file
     top_gainers = pd.read_csv('top_gainers.csv')
     top_gainers_list = top_gainers.values.tolist()
-    print(top_gainers_list)
+    #print(top_gainers_list)
     nifty_line_plot_json = create_nifty_line_plot()
     return render_template('index.html',  nifty_line_plot=nifty_line_plot_json, return_day=return_day, return_week=return_week, return_year=return_year, top_gainers=top_gainers_list)
 
@@ -241,6 +244,17 @@ def compare_graph():
     fig_json = json.dumps(fig, cls=PlotlyJSONEncoder)
     return render_template('compare_graph.html', plot=fig_json)
 
+
+import requests
+response = requests.get('https://newsdata.io/api/1/news?apikey=pub_375091ff6ac4084991333e623f125b2010868&q=stockmarket&language=en')
+#print(response.json()['results'][0]['title'])
+lst=[]
+for i in response.json()['results']:
+    lst.append([i['title'],i['link'],i['description']])
+
+@app.route('/news')
+def news():
+    return render_template('news.html', newsdata=lst)
 
 
 
