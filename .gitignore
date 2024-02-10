@@ -1,0 +1,6 @@
+*.csv
+*.pkl
+*.png
+*.txt
+*.parquet
+*.exe
