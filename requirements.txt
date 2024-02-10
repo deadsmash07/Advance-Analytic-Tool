@@ -1,0 +1,7 @@
+numpy
+matplotlib
+pandas
+argparse
+jugaad-data
+pyarrow
+fastparquet
