@@ -3,7 +3,11 @@
 
 #include <vector>
 typedef double ftype; // floating point type
+// function to calculate transpose of a matrix
+std::vector<std::vector<ftype>> transpose(const std::vector<std::vector<ftype>>& matrix);
 
+//function to calculate multiplication of two matrices
+std::vector<std::vector<ftype>> multiply(const std::vector<std::vector<ftype>>& matrix1, const std::vector<std::vector<ftype>>& matrix2);
 // Function to print a matrix
 void printMatrix(const std::vector<std::vector<ftype>>& matrix);
 

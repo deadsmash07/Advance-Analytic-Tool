@@ -26,7 +26,7 @@ from_date = to_date - timedelta(days=365*num_years)
 df = stock_df(symbol=SYMBOL, from_date=from_date, to_date=to_date, series="EQ")
 
 # Removing unwanted columns
-df = df.drop(columns=[ "LTP", "VOLUME", "VALUE","52W H", "52W L", "SERIES","SYMBOL"])
+df = df.drop(columns=[ "LTP","PREV. CLOSE", "VOLUME", "VALUE","52W H", "52W L", "SERIES","SYMBOL"])
 
 # Step 3: Write the data to different file formats and measure the time taken to write the file.
 file_formats = ['csv']
@@ -37,6 +37,13 @@ for file_format in file_formats:
     start_time = time.time()
     file_name = f"{SYMBOL}.{file_format}"
     if file_format == 'csv':
+        # Convert the date column to datetime format
+        df['DATE'] = pd.to_datetime(df['DATE'])
+
+        # Change the date format to 'DD/MM/YYYY'
+        df['DATE'] = df['DATE'].dt.strftime('%d/%m/%Y')
+
+        # Write the DataFrame to a CSV file
         df.to_csv(file_name, index=False)
     # elif file_format == 'txt':
     #     df.to_csv(file_name, sep='\t', index=False)
@@ -56,41 +63,39 @@ for file_format in file_formats:
     file_size = os.path.getsize(file_name)
     benchmark_results.append((file_format, end_time - start_time, file_size))
 
-# Convert benchmark_results to a pandas DataFrame for easier manipulation
-df_results = pd.DataFrame(benchmark_results, columns=['Format', 'Time', 'Size'])
+# # Convert benchmark_results to a pandas DataFrame for easier manipulation
+# df_results = pd.DataFrame(benchmark_results, columns=['Format', 'Time', 'Size'])
 
-# Calculate the mean and standard deviation of the time and size
-mean_time = df_results['Time'].mean()
-std_time = df_results['Time'].std()
-mean_size = df_results['Size'].mean()
-std_size = df_results['Size'].std()
+# # Calculate the mean and standard deviation of the time and size
+# mean_time = df_results['Time'].mean()
+# std_time = df_results['Time'].std()
+# mean_size = df_results['Size'].mean()
+# std_size = df_results['Size'].std()
 
-# Convert df_results to a list of dictionaries
-df_results_list = df_results.to_dict('records')
+# # Convert df_results to a list of dictionaries
+# df_results_list = df_results.to_dict('records')
 
-# Append the calculated values to the list
-df_results_list.append({
-    'Format': 'Mean',
-    'Time': mean_time,
-    'Size': mean_size
-})
+# # Append the calculated values to the list
+# df_results_list.append({
+#     'Format': 'Mean',
+#     'Time': mean_time,
+#     'Size': mean_size
+# })
 
-df_results_list.append({
-    'Format': 'Std Dev',
-    'Time': std_time,
-    'Size': std_size
-})
+# df_results_list.append({
+#     'Format': 'Std Dev',
+#     'Time': std_time,
+#     'Size': std_size
+# })
 
-# Convert the list back to a DataFrame
-df_results = pd.DataFrame(df_results_list)
+# # Convert the list back to a DataFrame
+# df_results = pd.DataFrame(df_results_list)
 
 
 # Write the DataFrame to a txt file
 # df_results.to_csv('benchmark_results.txt', sep='\t', index=False)
 
 # Convert time to milliseconds and size to kilobytes
-df_results['Time'] = df_results['Time'] * 1000
-df_results['Size'] = df_results['Size'] / 1024
 
 # Generate graphs
 

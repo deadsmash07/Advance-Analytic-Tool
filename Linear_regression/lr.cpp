@@ -2,22 +2,28 @@
 using namespace std;
 #include <fstream>
 #include <sstream>
-#include "matrix_invr.h"
+#include <iomanip> // for std::get_time
+#include <ctime> // for std::tm
+#include "matrix_functions.h"
 typedef double ftype; // floating point type
-const int NMAX = 100; // maximum number of samples
-const int NVAR = 7;   // number of independent variables
+const int NMAX = 100; // maximum number of days
+const int NVAR = 8;   // number of independent variables
 int n;                // number of samples
 vector<ftype> y(NMAX);        // dependent variable
 vector<vector<ftype>> x(NMAX, vector<ftype>(NVAR));  // independent variables
+vector<ftype> B(NVAR, 0); // beta matrix
 vector<vector<ftype>> inverseMatrix(const vector<vector<ftype>>& originalMatrix); // Function to invert a matrix
+vector<vector<ftype>> transpose(const vector<vector<ftype>>& matrix); // Function to calculate the transpose of a matrix
+vector<vector<ftype>> multiply(const vector<vector<ftype>>& matrix1, const vector<vector<ftype>>& matrix2); // Function to calculate the multiplication of two matrices
 ftype determinant(const vector<vector<ftype>>& matrix); // Function to calculate the determinant of a matrix
+
 // linear regression functions : Close(t) = β0+β1Close(t−1)+β2Open(t−1)+β3VWAP(t−1)+β4Low(t−1)+β5High(t−1)+β6(No of Trades)(t−1)+β7Open(t)
 // i have to read the data from the csv file and then calculate the covariance matrix and then solve the normal equations and then predict the response
-/* here is the csv format of the data: DATE,OPEN,HIGH,LOW,PREV. CLOSE,CLOSE,VWAP,NO OF TRADES
-                                      2024-02-09,703.65,728.35,694.2,699.55,725.25,711.47,757763 */
+/* here is the csv format of the data: DATE,OPEN,HIGH,LOW,CLOSE,VWAP,NO OF TRADES
+                                      2024-02-09,703.65,728.35,699.55,725.25,711.47,757763 */
 // Function to read data
 
-void readData() {
+void readData(string start_training_date, string end_training_date) {
     string filename = "SBIN.csv";
     ifstream file(filename);
     if (!file.is_open()) {
@@ -25,121 +31,118 @@ void readData() {
         return;
     }
 
+    // Convert the input dates to time_t for comparison
+    std::tm tm_start = {}, tm_end = {};
+    std::istringstream ss_start(start_training_date), ss_end(end_training_date);
+    ss_start >> std::get_time(&tm_start, "%d/%m/%Y");
+    ss_end >> std::get_time(&tm_end, "%d/%m/%Y");
+    tm_start.tm_mday--; // Shift the start date one day earlier
+    tm_end.tm_mday--; // Shift the end date one day earlier
+    time_t start_time = mktime(&tm_start), end_time = mktime(&tm_end);
+
     string line;
     getline(file, line); // Skip the header line
 
-    n = 0;
+    vector<string> lines;
     while (getline(file, line)) {
-        stringstream ss(line);
+        lines.push_back(line);
+    }
+
+    file.close();
+
+    n = 0;
+    vector<ftype> prev_day(NVAR, 0); // Store the previous day's data
+    vector<ftype> current_day(NVAR, 0); // Store the current day's data
+    for (int idx = lines.size() - 1; idx >= 0; --idx) {
+        stringstream ss(lines[idx]);
         string date;
-        getline(ss, date, ','); // Skip the date
+        getline(ss, date, ','); // Read the date
+
+        // Convert the date to time_t for comparison
+        std::tm tm = {};
+        std::istringstream ss_date(date);
+        ss_date >> std::get_time(&tm, "%Y-%m-%d");
+        time_t current_time = mktime(&tm);
+
+        // Skip the rows outside the date range
+        if (current_time < start_time || current_time > end_time) {
+            continue;
+        }
 
         // Read the dependent variable (CLOSE)
-        for (int i = 0; i < 5; ++i) {
+        for (int i = 0; i < 4; ++i) {
             getline(ss, line, ',');
         }
         y[n] = stod(line);
 
-        // Read the independent variables (OPEN, HIGH, LOW, PREV. CLOSE, VWAP, NO OF TRADES)
+        // Read the independent variables
         ss.seekg(0, ios::beg);
         getline(ss, line, ','); // Skip the date
-        for (int j = 0; j < NVAR; ++j) {
+
+        // First column should be 1
+        x[n][0] = 1;
+
+        // Rest of the columns should contain the previous day's data
+        for (int j = 1; j < NVAR; ++j) {
             getline(ss, line, ',');
-            x[n][j] = stod(line);
+            prev_day[j] = stod(line); // Store the current day's data for the next iteration
+            x[n][j] = prev_day[j];
         }
+
+        // The 8th column should contain the current day's opening price
+        x[n][7] = prev_day[1];
 
         ++n;
         if (n >= NMAX) {
             break;
         }
     }
-    //print the x and y values
-    for(int i=0;i<n;i++){
-        cout<<y[i]<<" ";
-        for(int j=0;j<NVAR;j++){
-            cout<<x[i][j]<<" ";
-        }
-        cout<<endl;
-    }
-
-
-    file.close();
 }
 // Function to compute sample mean
-ftype mean(vector<ftype>& arr) {
-    ftype sum = 0;
-    for (int i = 0; i < arr.size(); ++i) {
-        sum += arr[i];
-    }
-    return sum / arr.size();
-}
+// ftype mean(vector<ftype>& arr) {
+//     ftype sum = 0;
+//     for (int i = 0; i < arr.size(); ++i) {
+//         sum += arr[i];
+//     }
+//     return sum / arr.size();
+// }
 
-vector<vector<ftype>> calcCovMatrix(const vector<vector<ftype>>& x, int n, int NVAR) {    
-    vector<vector<ftype>> C(NVAR, vector<ftype>(NVAR, 0));
-    vector<ftype> mX(NVAR);
-    for (int j = 0; j < NVAR; ++j) {
-        vector<ftype> column(n);
-        for (int i = 0; i < n; ++i) {
-            column[i] = x[i][j];
-        }
-        mX[j] = accumulate(column.begin(), column.end(), 0.0) / n;
-    }
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < NVAR; ++j) {
-            for (int k = 0; k < NVAR; ++k) {
-                C[j][k] += (x[i][j] - mX[j])*(x[i][k] - mX[k]);
-            }
-        }
-    }
-    for (int j = 0; j < NVAR; ++j) {
-        for (int k = 0; k < NVAR; ++k) {
-            C[j][k] /= (n-1);
-        }
-    }
-    return C;
-}
+
+
 // Function to solve normal equations
-vector<ftype> solveNormalEqns(vector<vector<ftype>> C) {
-    vector<ftype> b(NVAR+1, 0);
-    // using my inverseMatrix function to calculate the inverse of C
-    vector<vector<ftype>> invC = inverseMatrix(C);
-    ftype det = determinant(C);
-    ftype mY = mean(y);
-    vector<ftype> mX(NVAR);
-    for (int j = 0; j < NVAR; ++j) {
-        vector<ftype> column(n);
-        for (int i = 0; i < n; ++i) {
-            column[i] = x[i][j];
-        }
-        mX[j] = mean(column);
-    }
-    b[0] = mY;
-    for (int i = 0; i < NVAR; ++i) {
-        b[i+1] = 0;
-        for (int j = 0; j < NVAR; ++j) {
-            b[i+1] -= invC[i][j]*mX[j];
+void solveNormalEqns(const vector<vector<ftype>> x, const vector<ftype>y, vector<ftype>& B){
+   // im going to calulate B(beta matrix) by using the formula B = (X^T*X)^-1*X^T*Y
+   vector<vector<ftype>> xT = transpose(x);
+    vector<vector<ftype>> xTx = multiply(xT, x);
+    vector<vector<ftype>> invxTx = inverseMatrix(xTx);
+    vector<vector<ftype>> invxTx_xT = multiply(invxTx, xT);
+   // now i need to multiply the above matrix(NVAR*n) with y which is n*1 matrix
+    for(int i=0;i<NVAR;i++){
+        for(int j=0;j<n;j++){
+            B[i] += invxTx_xT[i][j]*y[j];
         }
     }
-
-
-    return b;
-}
+    }
 
 
 // Function to predict response
-ftype predictResponse(vector<ftype>& b, vector<ftype>& x) {
-    ftype response = b[0];
-    for (int i = 0; i < NVAR; ++i) {
-        response += b[i+1]*x[i];
-    }
+//you will be given the beta matrix and new row of the independent variables and you have to predict the response
+ftype predictResponse(vector<ftype>& x0) {
+ void solveNormalEqns(const vector<vector<ftype>> x, const vector<ftype>y, vector<ftype>& B);
+ ftype response=0.0;
+ for(int i=0 ;i<NVAR;i++){
+      response += B[i]*x0[i];
+ }
     return response;
 }
 
-// int main() {
-//     readData();                       // read data
-//     vector<vector<ftype>> C = calcCovMatrix(y,x,n);                 // compute covariance matrix
-//     vector<ftype> b = solveNormalEqns(C);            // solve normal equations
-//     ftype predResp = predictResponse(b, x[0]);
-//     cout << "Predicted Response: " << fixed << setprecision(2) << predResp << endl;
-//     return 0;
-// }
+
+int main(){
+    string start_training_date = "02/01/2024";
+    string end_training_date = "08/01/2024";
+    readData(start_training_date, end_training_date);
+    predictResponse(x[0]);
+    cout<<predictResponse(x[0]);
+    return 0;
+    
+}

@@ -5,6 +5,6 @@ install:
 
 run:
 	@echo "Running the application..."
-	@python3 main.py $(SYMBOL) $(num_years)
+	@python3 main_arnav.py $(SYMBOL) $(num_years)
 
 all: install run	

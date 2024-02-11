@@ -4,6 +4,40 @@
 typedef double ftype; // floating point type
 using namespace std;
 
+
+
+// function to calculate transpose of a matrix
+std::vector<std::vector<ftype>> transpose(const std::vector<std::vector<ftype>>& matrix){
+    int n = matrix.size();
+    int m = matrix[0].size();
+    std::vector<std::vector<ftype>> transposedMatrix(m, std::vector<ftype>(n));
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            transposedMatrix[j][i] = matrix[i][j];}}
+    return transposedMatrix;}
+
+//function to calculate multiplication of two matrices
+std::vector<std::vector<ftype>> multiply(const std::vector<std::vector<ftype>>& matrix1, const std::vector<std::vector<ftype>>& matrix2){
+    int n1 = matrix1.size();
+    int m1 = matrix1[0].size();
+    int n2 = matrix2.size();
+    int m2 = matrix2[0].size();
+    std::vector<std::vector<ftype>> result(n1, std::vector<ftype>(m2));
+    if (m1 != n2) {
+        std::cout << "Invalid dimensions for matrix multiplication!" << std::endl;
+        exit(-1);
+    }
+    for (int i = 0; i < n1; ++i) {
+        for (int j = 0; j < m2; ++j) {
+            result[i][j] = 0;
+            for (int k = 0; k < m1; ++k) {
+                result[i][j] += matrix1[i][k] * matrix2[k][j];
+            }
+        }
+    }
+    return result;
+}
+
 // Function to print a matrix
 void printMatrix(const vector<vector<ftype>>& matrix) {
     for (const auto& row : matrix) {
@@ -144,19 +178,32 @@ vector<vector<ftype>> inverseMatrix(const vector<vector<ftype>>& originalMatrix)
 //     vector<vector<ftype>> A = {
 //         // Initialize your matrix A with your data
 //         {1, 2, 3, 4},
-//         {5, 6, 7, 8},
+//         {5, 6, 2, 8},
+//         {9, 1, 11, 2}
+//     };
+//     vector<vector<ftype>> B = {
+//         // Initialize your matrix A with your data
+//         {1, 2, 3, 4},
+//         {5, 6, 4, 8},
 //         {9, 10, 11, 12},
 //         {13, 14, 15, 16}
 //     };
 
 //     // Get the inverse of the matrix A
 //     vector<vector<ftype>> A_inv = inverseMatrix(A);
+//     vector<vector<ftype>> transposed_A = transpose(A);
+//     vector<vector<ftype>> C = multiply(A,B);
+
 //     // Calculate the determinant of the matrix A
 //     ftype det_A = determinant(A);
 //     cout << "Determinant of A: " << det_A << "\n";
 //     // Print the inverse matrix
 //     cout << "Inverse Matrix: \n";
 //     printMatrix(A_inv);
-
+//     cout << "Transpose of A: \n";
+//     printMatrix(transposed_A);
+//     cout << "Multiplication of A and B: \n";
+//     cout<< transposed_A.size()<<endl;
+//     printMatrix(C);
 //     return 0;
 // }
