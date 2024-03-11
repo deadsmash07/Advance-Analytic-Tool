@@ -105,7 +105,7 @@ This web application stands as a comprehensive platform for stock market analysi
 
 
 
-# Basic Stock Trading Strategy Program
+# Basic Stock Trading Strategy Program  [code](https://github.com/deadsmash07/Advance-Analytic-Tool/tree/main/Trading_Algorithms)
 
 ## 1.1 Basic Strategy Overview
 This program implements a basic stock trading strategy based on the momentum of stock prices over the past `n` days. The algorithm operates as follows:
