@@ -1,5 +1,10 @@
 # Comprehensive Overview of Stock Market Analysis Web Application
 
+
+## Demo 
+working of the code can be found [here](demo.mp4).
+* * * * *
+
 To run the code on linux system you have to download the dependencies with 
 ```make
 make install
